@@ -1,0 +1,57 @@
+
+#####################################
+##
+## This play will install k8s components,
+## Args:
+##    k8s_version: 1.35
+##    token: <string>
+##    discovery_token_ca_cert_hash: <string>
+##    cp_ip: 192.168.0.1
+#####################################
+
+- hosts: workers
+  become: true
+  tasks:
+    # https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
+    # This overwrites any existing configuration in /etc/yum.repos.d/kubernetes.repo
+    - name: Adding yum repository for K8s
+      template:
+        src: files/kubernetes.repo
+        dest: /etc/yum.repos.d/kubernetes.repo
+        force: true
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Install kubelet kubeadm kubectl
+      dnf:
+        name:
+          - kubelet
+          - kubeadm
+          - kubectl
+        state: latest
+        disable_excludes: kubernetes
+
+    - name: Enabling kubelet
+      command: systemctl enable --now kubelet
+
+    - name: Getting Hostname
+      shell: echo $HOSTNAME
+      register: hostname_output
+
+    - name: Create working dir
+      shell: mkdir -p /tmp/k8s
+
+    - name: Configuring join template
+      vars:
+        hostname: "{{hostname_output.stdout_lines.0}}"
+      template:
+        src: files/join.yml
+        dest: /tmp/k8s/join.yml
+        force: true
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Joining cluster
+      command: kubeadm join --config /tmp/k8s/join.yml

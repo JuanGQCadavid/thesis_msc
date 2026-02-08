@@ -1,0 +1,30 @@
+#####################################
+##
+## This play will install cni plugins,
+## Args:
+##    cni_plugins_version=1.9.0
+##
+#####################################
+- hosts: workers
+  become: true
+  tasks:
+    - name: Install iptables
+      dnf:
+        name: iptables
+        state: latest
+
+    # Taken from https://github.com/containernetworking/plugins/releases/tag/v1.9.0
+    - name: CNI Plugins
+      shell: |
+        echo "Cleaning old bin"
+        rm -f /opt/cni/bin/ || true
+        
+        echo "Downloading CNI v{{cni_plugins_version}} plugins"
+        wget -O cni-plugins.tgz https://github.com/containernetworking/plugins/releases/download/v{{cni_plugins_version}}/cni-plugins-linux-arm-v{{cni_plugins_version}}.tgz
+        mkdir -p /opt/cni/bin/
+        tar xvfx cni-plugins.tgz -C /opt/cni/bin/
+
+    - name: Set SELinux in permissive mode (effectively disabling it)
+      shell: |
+        setenforce 0
+        sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config

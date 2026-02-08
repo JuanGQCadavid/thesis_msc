@@ -1,0 +1,40 @@
+
+#####################################
+##
+## This play will install containerD,
+## with SystemdCgroup and ip_forward true
+## on Red Hat kernels
+## Args:
+##    containerd_version=2.1.15
+#####################################
+- hosts: workers
+  become: true
+  tasks:
+  - name: Install ContainerD and RunC
+    dnf:
+      name: "containerd-{{containerd_version}}"
+      state: present
+
+
+  - name: Configuring net ip forward
+    shell: |
+      cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+      net.ipv4.ip_forward = 1
+      EOF
+      
+      sysctl --system
+
+  - name: Copy containerd config
+    copy:
+      src: files/config.toml
+      dest: /etc/containerd/config.toml
+      force: true
+      owner: root
+      group: root
+      mode: '0644'
+
+  - name: Restarting ContainerD
+    command: systemctl restart containerd
+
+  - name: enabling ContainerD
+    command: systemctl enable containerd

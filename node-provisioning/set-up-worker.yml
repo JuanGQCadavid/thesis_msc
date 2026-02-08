@@ -1,32 +1,18 @@
 ---
 - name: Set up ContainerD
-  hosts: workers
-  tasks:
-    - name: Install ContainerD and RunC
-      become: yes
-      dnf:
-        name: containerd
-        state: latest
+  import_playbook: plays/containerd/play.yml
+  vars:
+    containerd_version: 2.1.5
 
-    - name: Configuring net ip forward
-      become: yes
-      shell: |
-        cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
-        net.ipv4.ip_forward = 1
-        EOF
-        
-        sysctl --system
+- name: Set up CNI plugins and SElLinux
+  import_playbook: plays/cni-plugins/play.yml
+  vars:
+    cni_plugins_version: 1.9.0
 
-    - name: Copy containerd config
-      become: yes
-      copy:
-        src: files/container_d_config.toml
-        dest: /etc/containerd/config.toml
-        force: true
-        owner: root
-        group: root
-        mode: '0644'
-
-    - name: Restarting ContainerD
-      become: yes
-      shell: systemctl restart containerd
+- name: Set up k8s worker
+  import_playbook: plays/k8s-basics/play.yml
+  vars:
+    k8s_version: 1.35
+    cp_ip: 3.17.116.249
+    token: jtlo3n.yzg6fiyaa5s4n7sj
+    discovery_token_ca_cert_hash: sha256:46a3cac5e7dbd74efb615a1dcfb9f55abe1f2f7ca888a5ee4b5a2c6179f5fad1

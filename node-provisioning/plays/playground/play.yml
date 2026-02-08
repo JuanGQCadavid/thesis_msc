@@ -1,0 +1,9 @@
+- hosts: workers
+  become: true
+  tasks:
+    - name: Read env var from remote
+      shell: echo $HOSTNAME
+      register: my_var
+
+    - debug:
+        msg: "{{ my_var.stdout_lines }}"
