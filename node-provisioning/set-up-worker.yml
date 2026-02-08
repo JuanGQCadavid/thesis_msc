@@ -1,0 +1,32 @@
+---
+- name: Set up ContainerD
+  hosts: workers
+  tasks:
+    - name: Install ContainerD and RunC
+      become: yes
+      dnf:
+        name: containerd
+        state: latest
+
+    - name: Configuring net ip forward
+      become: yes
+      shell: |
+        cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+        net.ipv4.ip_forward = 1
+        EOF
+        
+        sysctl --system
+
+    - name: Copy containerd config
+      become: yes
+      copy:
+        src: files/container_d_config.toml
+        dest: /etc/containerd/config.toml
+        force: true
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Restarting ContainerD
+      become: yes
+      shell: systemctl restart containerd
