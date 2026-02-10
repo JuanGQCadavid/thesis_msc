@@ -1,0 +1,53 @@
+#####################################
+##
+## This play will install k8s core components as:
+## Helm
+## ArgoCD
+##
+## Variables
+##   argo_cd_version: 3.3.0
+##
+#####################################
+
+- hosts: cp
+  become: true
+  tasks:
+    - name: creating working folder
+      file:
+        path: /tmp/core-components
+        state: directory
+
+#    - name: Installing helm
+#      shell: |
+#        cd /tmp/core-components
+#        curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+#        chmod 700 get_helm.sh
+#        ./get_helm.sh
+
+    - name: Moving ArgoCD chart
+      copy:
+        src: charts/argo-cd
+        dest: /tmp/core-components/charts
+        force: true
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Installing ArgoCD
+      shell: |
+        echo "Configuring helm and deps"
+        helm repo add argo-cd https://argoproj.github.io/argo-helm
+        helm dep update /tmp/core-components/charts/argo-cd
+        
+        echo "name space and helm install"
+        kubectl get ns argocd || kubectl create namespace argocd
+        
+        helm ls -n argocd | grep argocd -q || helm install argocd /tmp/core-components/charts/argo-cd \
+          -n argocd \
+          -f /tmp/core-components/charts/argo-cd/values.yaml \
+          -f /tmp/core-components/charts/argo-cd/base.values.yaml
+
+    - name: Cleaning working dir
+      file:
+        path: /tmp/core-components
+        state: absent
