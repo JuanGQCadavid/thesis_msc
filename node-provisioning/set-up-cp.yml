@@ -1,5 +1,8 @@
 ---
-- name: Install core components
-  import_playbook: plays/core-components/play.yml
-  vars:
-    argo_cd_version: 3.3.0
+#- name: Install Argo component
+#  import_playbook: plays/argo/play.yml
+#  vars:
+#    argo_cd_version: 3.3.0
+
+- name: Install Longhorn component
+  import_playbook: plays/block-storage-system/cp.yml

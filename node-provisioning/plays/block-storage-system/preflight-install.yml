@@ -1,0 +1,21 @@
+
+- hosts:
+    - cp
+  become: true
+  tasks:
+    - name: creating working folder
+      file:
+        path: /tmp/longhorn
+        state: directory
+
+    - name: Install basics
+      shell: |
+        cd /tmp/longhorn
+        curl -sSfL -o longhornctl https://github.com/longhorn/cli/releases/download/v1.11.0/longhornctl-linux-arm64
+        chmod +x longhornctl
+        ./longhornctl install preflight --kubeconfig=/root/.kube/config
+
+    - name: Cleaning working dir
+      file:
+        path: /tmp/longhorn
+        state: absent

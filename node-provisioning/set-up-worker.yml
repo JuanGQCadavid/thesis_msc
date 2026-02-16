@@ -14,5 +14,8 @@
   vars:
     k8s_version: 1.35
     cp_ip: 3.17.116.249
-    token: 1a9qnx.tuzwfnkm9i9q1efb
+    token: 7tz51l.ggewf4df8moq2hrc
     discovery_token_ca_cert_hash: sha256:46a3cac5e7dbd74efb615a1dcfb9f55abe1f2f7ca888a5ee4b5a2c6179f5fad1
+
+- name: Set node storage
+  import_playbook: plays/block-storage-system/preflight-install.yml

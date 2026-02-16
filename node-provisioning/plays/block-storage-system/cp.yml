@@ -1,0 +1,65 @@
+#####################################
+##
+## This play will install k8s core components as:
+## Helm
+## ArgoCD
+##
+## Variables
+##   argo_cd_version: 3.3.0
+##
+#####################################
+
+#- hosts:
+#    - cp
+#  become: true
+#  tasks:
+#    - name: creating working folder
+#      file:
+#        path: /tmp/csi
+#        state: directory
+#
+#    - name: Moving manifests
+#      copy:
+#        src: manifest
+#        dest: /tmp/csi
+#        force: true
+#        owner: root
+#        group: root
+#        mode: '0644'
+#
+#    - name: Creating namespace
+#      command: kubectl apply -f /tmp/csi/manifest/namespace.yml
+#
+#    - name: Cleaning working dir
+#      file:
+#        path: /tmp/csi
+#        state: absent
+
+#- name: Longhorn install
+#  import_playbook: preflight-install.yml
+
+- hosts:
+    - cp
+  become: true
+  tasks:
+    - name: creating working folder
+      file:
+        path: /tmp/longhorn_helm
+        state: directory
+
+    - name: Moving chart
+      copy:
+        src: charts/longhorn
+        dest: /tmp/longhorn_helm
+        force: true
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Applying helm
+      command: helm install longhorn /tmp/longhorn_helm/longhorn -n longhorn-system
+
+    - name: Cleaning working dir
+      file:
+        path: /tmp/longhorn_helm
+        state: absent
