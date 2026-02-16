@@ -5,12 +5,14 @@ argo-cd:
       type: NodePort
       nodePortHttp: 30004
       nodePortHttps: null
+    ingress:
+      enabled: false
+#      ingressClassName: "nginx"
+#      hostname: argocd.18.220.254.204.nip.io
   dex:
     enabled: false
   notifications:
     enabled: false
-  ingress:
-    enabled: true
 
   #affinity:
   #  nodeAffinity:

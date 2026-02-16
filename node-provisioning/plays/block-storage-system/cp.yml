@@ -49,6 +49,18 @@
 
     - name: Moving chart
       copy:
+        src: manifest
+        dest: /tmp/longhorn_helm
+        force: true
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Creating namespace
+      command: kubectl apply -f /tmp/longhorn_helm/manifest/namespace.yml
+
+    - name: Moving chart
+      copy:
         src: charts/longhorn
         dest: /tmp/longhorn_helm
         force: true

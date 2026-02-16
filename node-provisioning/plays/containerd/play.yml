@@ -6,8 +6,9 @@
 ## on Red Hat kernels
 ## Args:
 ##    containerd_version=2.1.15
+##    hosts
 #####################################
-- hosts: workers
+- hosts: "{{_hosts}}"
   become: true
   tasks:
   - name: Install ContainerD and RunC
