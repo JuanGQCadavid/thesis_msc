@@ -19,8 +19,11 @@
         echo "Cleaning old bin"
         rm -f /opt/cni/bin/ || true
         
+        CLI_ARCH=amd64
+        if [ "$(uname -m)" = "aarch64" ]; then CLI_ARCH=arm64; fi
+        
         echo "Downloading CNI v{{cni_plugins_version}} plugins"
-        wget -O cni-plugins.tgz https://github.com/containernetworking/plugins/releases/download/v{{cni_plugins_version}}/cni-plugins-linux-arm-v{{cni_plugins_version}}.tgz
+        wget -O cni-plugins.tgz https://github.com/containernetworking/plugins/releases/download/v{{cni_plugins_version}}/cni-plugins-linux-${CLI_ARCH}-v{{cni_plugins_version}}.tgz
         mkdir -p /opt/cni/bin/
         tar xvfx cni-plugins.tgz -C /opt/cni/bin/
 

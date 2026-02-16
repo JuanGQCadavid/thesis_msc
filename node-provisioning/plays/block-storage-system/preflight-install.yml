@@ -11,7 +11,10 @@
     - name: Install basics
       shell: |
         cd /tmp/longhorn
-        curl -sSfL -o longhornctl https://github.com/longhorn/cli/releases/download/v1.11.0/longhornctl-linux-arm64
+        CLI_ARCH=amd64
+        if [ "$(uname -m)" = "aarch64" ]; then CLI_ARCH=arm64; fi
+        
+        curl -sSfL -o longhornctl https://github.com/longhorn/cli/releases/download/v1.11.0/longhornctl-linux-${CLI_ARCH}
         chmod +x longhornctl
         ./longhornctl install preflight --kubeconfig=/etc/kubernetes/admin.conf #/root/.kube/config
 
