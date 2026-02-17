@@ -12,9 +12,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/JuanGQCadavid/argo-cd-example.git
+    repoURL: https://github.com/JuanGQCadavid/thesis_msc.git
     targetRevision: HEAD
-    path: db-api
+    path: apps/db-api
 
     helm:
       releaseName: db-api
