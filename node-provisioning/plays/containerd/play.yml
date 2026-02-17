@@ -11,9 +11,15 @@
 - hosts: "{{_hosts}}"
   become: true
   tasks:
+  - name: Add docker repo
+    shell: |
+      dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+      dnf update -y
+
   - name: Install ContainerD and RunC
     dnf:
-      name: "containerd-{{containerd_version}}"
+      # TODO: WTF, in aws is containerd, in centos is containerd.io
+      name: "containerd.io-{{containerd_version}}"
       state: present
 
 

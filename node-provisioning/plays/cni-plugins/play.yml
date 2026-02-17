@@ -8,6 +8,12 @@
 - hosts: "{{_hosts}}"
   become: true
   tasks:
+    - name: Install dependencies
+      dnf:
+        name:
+          - wget
+        state: latest
+
     - name: Install iptables
       dnf:
         name: iptables

@@ -1,30 +1,30 @@
 ---
-#- name: Set up ContainerD
-#  import_playbook: plays/containerd/play.yml
-#  vars:
-#    containerd_version: 2.1.5
-#    _hosts: cp
-#
-#- name: Set up CNI plugins and SElLinux
-#  import_playbook: plays/cni-plugins/play.yml
-#  vars:
-#    cni_plugins_version: 1.9.0
-#    _hosts: cp
-#
-#- name: Set up k8s cp
-#  import_playbook: plays/k8s-basics/play.yml
-#  vars:
-#    k8s_version: 1.35
-#    cp_ip: "{{hostvars[inventory_hostname]['groups']['cp'][0]}}"
-#    _hosts: cp
+- name: Set up ContainerD
+  import_playbook: plays/containerd/play.yml
+  vars:
+    containerd_version: 2.1.5
+    _hosts: cp
 
-- name: Ingress nginx
-  hosts: cp
-  become: true
-  tasks:
-    - name: install
-      command: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.14.3/deploy/static/provider/baremetal/deploy.yaml
+- name: Set up CNI plugins and SElLinux
+  import_playbook: plays/cni-plugins/play.yml
+  vars:
+    cni_plugins_version: 1.9.0
+    _hosts: cp
 
+- name: Set up k8s cp
+  import_playbook: plays/k8s-basics/play.yml
+  vars:
+    k8s_version: 1.35
+    cp_ip: "{{hostvars[inventory_hostname]['groups']['cp'][0]}}"
+    _hosts: cp
+
+#- name: Ingress nginx
+#  hosts: cp
+#  become: true
+#  tasks:
+#    - name: install
+#      command: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.14.3/deploy/static/provider/baremetal/deploy.yaml
+#
 #- name: Install Argo component
 #  import_playbook: plays/argo/play.yml
 #  vars:

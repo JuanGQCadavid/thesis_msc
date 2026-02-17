@@ -98,6 +98,7 @@ kubectl taint nodes --all node-role.kubernetes.io/control-plane-
 mkdir -p $HOME/.kube
 cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 chown $(id -u):$(id -g) $HOME/.kube/config
+alias k="kubectl"
 
 #export USER_HOME="/home/ec2-user"
 #mkdir -p $USER_HOME/.kube

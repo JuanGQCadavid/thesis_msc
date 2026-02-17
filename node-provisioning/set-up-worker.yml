@@ -1,15 +1,15 @@
 ---
-- name: Set up ContainerD
-  import_playbook: plays/containerd/play.yml
-  vars:
-    containerd_version: 2.1.5
-    _hosts: worker
-
-- name: Set up CNI plugins and SElLinux
-  import_playbook: plays/cni-plugins/play.yml
-  vars:
-    cni_plugins_version: 1.9.0
-    _hosts: worker
+#- name: Set up ContainerD
+#  import_playbook: plays/containerd/play.yml
+#  vars:
+#    containerd_version: 2.1.5
+#    _hosts: worker
+#
+#- name: Set up CNI plugins and SElLinux
+#  import_playbook: plays/cni-plugins/play.yml
+#  vars:
+#    cni_plugins_version: 1.9.0
+#    _hosts: worker
 
 - name: Set up k8s worker
   import_playbook: plays/k8s-basics/play.yml
@@ -17,8 +17,8 @@
     _hosts: worker
     k8s_version: 1.35
     cp_ip: "{{hostvars[inventory_hostname]['groups']['cp'][0]}}"
-    token: wlxqfl.kci8vp976a6ylgx7
-    discovery_token_ca_cert_hash: sha256:8317324a41f6be649d18a92174b91658760db4633040b37fb9886b74c4e46b20
+    token: 4xj0a7.lghjoi8kk062hxdx
+    discovery_token_ca_cert_hash: sha256:6b111c155b676675439ad7a18f0854e7e1b5954808a2b91ca926b68451fa86b9
 
 - name: Set node storage
   import_playbook: plays/block-storage-system/preflight-install.yml
