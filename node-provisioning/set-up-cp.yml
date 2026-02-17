@@ -18,17 +18,17 @@
     cp_ip: "{{hostvars[inventory_hostname]['groups']['cp'][0]}}"
     _hosts: cp
 
-#- name: Ingress nginx
-#  hosts: cp
-#  become: true
-#  tasks:
-#    - name: install
-#      command: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.14.3/deploy/static/provider/baremetal/deploy.yaml
-#
-#- name: Install Argo component
-#  import_playbook: plays/argo/play.yml
-#  vars:
-#    argo_cd_version: 3.3.0
-#
-#- name: Install Longhorn component
-#  import_playbook: plays/block-storage-system/cp.yml
+- name: Ingress nginx
+  hosts: cp
+  become: true
+  tasks:
+    - name: install
+      command: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.14.3/deploy/static/provider/baremetal/deploy.yaml
+
+- name: Install Argo component
+  import_playbook: plays/argo/play.yml
+  vars:
+    argo_cd_version: 3.3.0
+
+- name: Install Longhorn component
+  import_playbook: plays/block-storage-system/cp.yml
