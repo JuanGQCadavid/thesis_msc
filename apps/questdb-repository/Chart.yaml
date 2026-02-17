@@ -1,0 +1,10 @@
+apiVersion: v2
+name: questdb-repository
+description: A Helm chart for Kubernetes
+dependencies:
+  - name: questdb
+    version: 1.0.20
+    repository: https://helm.questdb.io/
+type: application
+version: 0.1.0
+appVersion: "1.16.0"

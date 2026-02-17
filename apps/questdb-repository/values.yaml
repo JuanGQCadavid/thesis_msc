@@ -1,0 +1,140 @@
+############################
+##
+## Dependencies
+##
+############################
+
+questdb:
+  image:
+    repository: questdb/questdb
+    pullPolicy: IfNotPresent
+    tag: 9.3.2
+
+  imagePullSecrets: [ ]
+  nameOverride: ""
+  fullnameOverride: ""
+
+  podAnnotations: { }
+  podSecurityContext: { }
+  securityContext: { }
+
+  extraVolumes: [ ]
+  extraVolumeMounts: [ ]
+  extraLabels: { }
+
+  questdb:
+    dataDir: /var/lib/questdb
+    configStorageType: ConfigMap
+    serverConfig:
+      enabled: false
+      options: { }
+    loggingConfig:
+      enabled: false
+      options: { }
+    mimeConfig:
+      enabled: false
+      options: { }
+    # env supports key/value pairs that are added directly to the questdb statefulset's env
+    env: { }
+    # envFrom supports a list of sources that will be injected into the questdb statefulset's env
+    envFrom: [ ]
+
+  service:
+    annotations: { }
+    type: ClusterIP
+    port: 9000
+    expose:
+      postgresql:
+        enabled: false
+        port: 8812
+      influxdb:
+        enabled: false
+        port: 9009
+
+  persistence:
+    enabled: true
+    accessMode: ReadWriteOnce
+    size: 30Gi
+    annotations: { }
+    # Uncomment storageClass if you want to use a specific Storage Class
+    # storageClass: STORAGE_CLASS_NAME_HERE
+    # Uncomment existingClaim to enable existing pvc to be mounted for db storage
+    # size and accessMode will be ignored
+    # existing pvc needs to be in the namespace where questdb will be deployed
+    # if you have problems with aws availability zones use nodeSelector to schedule nodes in the same az as volume
+    # existingClaim: PVC_NAME_HERE
+
+  ingress:
+    enabled: false
+    annotations: { }
+    # tls:
+    #   - hosts:
+    #       - example.com
+    #     secretName: questdb-certificate
+    # ingressClassName: nginx
+    # hosts:
+    #   - host: example.com
+    #     paths:
+    #       - path: /
+    #         pathType: ImplementationSpecific
+
+  resources: { }
+  nodeSelector: { }
+  tolerations: [ ]
+  affinity: { }
+  readinessProbe: { }
+    # Example of readinessProbe
+    # failureThreshold: 3
+    # httpGet:
+    #   path: /status
+    #   port: 9003
+    #   scheme: HTTP
+    # initialDelaySeconds: 5
+    # periodSeconds: 10
+  # successThreshold: 1
+  # timeoutSeconds: 2
+  livenessProbe: { }
+    # Example of livenessProbe
+    # failureThreshold: 5
+    # httpGet:
+    #   path: /status
+    #   port: 9003
+    #   scheme: HTTP
+    # initialDelaySeconds: 5
+    # periodSeconds: 10
+  # successThreshold: 1
+  # timeoutSeconds: 2
+
+  automountServiceAccountToken: false
+
+  metrics:
+    enabled: true
+    port: 9003
+
+  initContainers: [ ]
+  sidecars: [ ]
+
+  serviceAccount:
+    create: false
+    labels: { }
+    annotations: { }
+    automountServiceAccountToken: false
+
+    # if create is set to "true", you can specify the name of that service account below
+    # if create is set to "false", you can use this to reference an existing service account for the StatefulSet pod
+    # name: custom-service-account-name
+
+  dataMigration:
+    image:
+      repository: debian
+      pullPolicy: IfNotPresent
+      tag: 12.10-slim
+    resources:
+      requests:
+        memory: "256Mi"
+      limits:
+        memory: "1Gi"
+
+  # openshift
+  openshift:
+    enabled: detect
