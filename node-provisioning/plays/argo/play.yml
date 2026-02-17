@@ -82,8 +82,8 @@
         group: root
         mode: '0644'
 
-    - name: Applying applications file
-      command: kubectl apply -f /tmp/core-components/config/argocd.yml -n argocd
+#    - name: Applying applications file
+#      command: kubectl apply -f /tmp/core-components/config/argocd.yml -n argocd
 
     - name: Cleaning working dir
       file:
