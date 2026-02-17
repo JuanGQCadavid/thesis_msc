@@ -1,0 +1,11 @@
+longhorn:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    host: longhorn.172.17.90.93.nip.io
+    tls: false
+    secureBackends: false
+  defaultSettings:
+    defaultReplicaCount: 2
+  longhornUI:
+    replicas: 1
