@@ -5,8 +5,6 @@ kind: Application
 metadata:
   name: db-api
   namespace: argocd
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
   labels:
     app: tartu-timeseries
 spec:
