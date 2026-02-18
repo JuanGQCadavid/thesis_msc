@@ -1,46 +1,40 @@
-############################
-##
-## Dependencies
-##
-############################
-
 questdb:
   image:
     repository: questdb/questdb
     pullPolicy: IfNotPresent
     tag: 9.3.2
 
-  imagePullSecrets: [ ]
+  imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: ""
 
-  podAnnotations: { }
-  podSecurityContext: { }
-  securityContext: { }
+  podAnnotations: {}
+  podSecurityContext: {}
+  securityContext: {}
 
-  extraVolumes: [ ]
-  extraVolumeMounts: [ ]
-  extraLabels: { }
+  extraVolumes: []
+  extraVolumeMounts: []
+  extraLabels: {}
 
   questdb:
     dataDir: /var/lib/questdb
     configStorageType: ConfigMap
     serverConfig:
       enabled: false
-      options: { }
+      options: {}
     loggingConfig:
       enabled: false
-      options: { }
+      options: {}
     mimeConfig:
       enabled: false
-      options: { }
+      options: {}
     # env supports key/value pairs that are added directly to the questdb statefulset's env
-    env: { }
+    env: {}
     # envFrom supports a list of sources that will be injected into the questdb statefulset's env
-    envFrom: [ ]
+    envFrom: []
 
   service:
-    annotations: { }
+    annotations: {}
     type: ClusterIP
     port: 9000
     expose:
@@ -54,8 +48,8 @@ questdb:
   persistence:
     enabled: true
     accessMode: ReadWriteOnce
-    size: 30Gi
-    annotations: { }
+    size: 50Gi
+    annotations: {}
     # Uncomment storageClass if you want to use a specific Storage Class
     # storageClass: STORAGE_CLASS_NAME_HERE
     # Uncomment existingClaim to enable existing pvc to be mounted for db storage
@@ -66,7 +60,7 @@ questdb:
 
   ingress:
     enabled: false
-    annotations: { }
+    annotations: {}
     # tls:
     #   - hosts:
     #       - example.com
@@ -78,11 +72,11 @@ questdb:
     #       - path: /
     #         pathType: ImplementationSpecific
 
-  resources: { }
-  nodeSelector: { }
-  tolerations: [ ]
-  affinity: { }
-  readinessProbe: { }
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  readinessProbe: {}
     # Example of readinessProbe
     # failureThreshold: 3
     # httpGet:
@@ -91,9 +85,9 @@ questdb:
     #   scheme: HTTP
     # initialDelaySeconds: 5
     # periodSeconds: 10
-  # successThreshold: 1
+    # successThreshold: 1
   # timeoutSeconds: 2
-  livenessProbe: { }
+  livenessProbe: {}
     # Example of livenessProbe
     # failureThreshold: 5
     # httpGet:
@@ -102,7 +96,7 @@ questdb:
     #   scheme: HTTP
     # initialDelaySeconds: 5
     # periodSeconds: 10
-  # successThreshold: 1
+    # successThreshold: 1
   # timeoutSeconds: 2
 
   automountServiceAccountToken: false
@@ -111,13 +105,13 @@ questdb:
     enabled: true
     port: 9003
 
-  initContainers: [ ]
-  sidecars: [ ]
+  initContainers: []
+  sidecars: []
 
   serviceAccount:
     create: false
-    labels: { }
-    annotations: { }
+    labels: {}
+    annotations: {}
     automountServiceAccountToken: false
 
     # if create is set to "true", you can specify the name of that service account below
