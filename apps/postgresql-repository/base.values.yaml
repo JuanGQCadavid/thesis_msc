@@ -1,0 +1,126 @@
+postgresql:
+  global:
+    imageRegistry: ""
+    defaultStorageClass: "longhorn"
+    storageClass: "longhorn"
+    postgresql:
+      auth:
+        postgresPassword: "postgres"
+        username: "admin"
+        password: "password"
+        database: ""
+  namespaceOverride: ""
+  image:
+    registry: registry-1.docker.io
+    repository: bitnami/postgresql
+    tag: latest
+  architecture: standalone
+  containerPorts:
+    postgresql: 5432
+  primary:
+    affinity: {}
+
+    ## Network Policies
+    ## Ref: https://kubernetes.io/docs/concepts/services-networking/network-policies/
+    ##
+    networkPolicy:
+      ## @param primary.networkPolicy.enabled Specifies whether a NetworkPolicy should be created
+      ##
+      enabled: true
+      ## @param primary.networkPolicy.allowExternal Don't require server label for connections
+      ## The Policy model to apply. When set to false, only pods with the correct
+      ## server label will have network access to the ports server is listening
+      ## on. When true, server will accept connections from any source
+      ## (with the correct destination port).
+      ##
+      allowExternal: true
+      ## @param primary.networkPolicy.allowExternalEgress Allow the pod to access any range of port and all destinations.
+      ##
+      allowExternalEgress: true
+      ## @param primary.networkPolicy.extraIngress [array] Add extra ingress rules to the NetworkPolicy
+      ## e.g:
+      ## extraIngress:
+      ##   - ports:
+      ##       - port: 1234
+      ##     from:
+      ##       - podSelector:
+      ##           - matchLabels:
+      ##               - role: frontend
+      ##       - podSelector:
+      ##           - matchExpressions:
+      ##               - key: role
+      ##                 operator: In
+      ##                 values:
+      ##                   - frontend
+      extraIngress: []
+      ## @param primary.networkPolicy.extraEgress [array] Add extra ingress rules to the NetworkPolicy
+      ## e.g:
+      ## extraEgress:
+      ##   - ports:
+      ##       - port: 1234
+      ##     to:
+      ##       - podSelector:
+      ##           - matchLabels:
+      ##               - role: frontend
+      ##       - podSelector:
+      ##           - matchExpressions:
+      ##               - key: role
+      ##                 operator: In
+      ##                 values:
+      ##                   - frontend
+      ##
+      extraEgress: []
+      ## @param primary.networkPolicy.ingressNSMatchLabels [object] Labels to match to allow traffic from other namespaces
+      ## @param primary.networkPolicy.ingressNSPodMatchLabels [object] Pod labels to match to allow traffic from other namespaces
+      ##
+      ingressNSMatchLabels: {}
+      ingressNSPodMatchLabels: {}
+    service:
+      enabled: true
+      type: ClusterIP
+      ports:
+        postgresql: 5432
+    persistence:
+      enabled: true
+      size: 8Gi
+
+  # TODO: Set up first prometheus
+  metrics:
+    enabled: false
+    ## @param metrics.customMetrics Define additional custom metrics
+    ## ref: https://github.com/prometheus-community/postgres_exporter#adding-new-metrics-via-a-config-file-deprecated
+    ## customMetrics:
+    ##   pg_database:
+    ##     query: "SELECT d.datname AS name, CASE WHEN pg_catalog.has_database_privilege(d.datname, 'CONNECT') THEN pg_catalog.pg_database_size(d.datname) ELSE 0 END AS size_bytes FROM pg_catalog.pg_database d where datname not in ('template0', 'template1', 'postgres')"
+    ##     metrics:
+    ##       - name:
+    ##           usage: "LABEL"
+    ##           description: "Name of the database"
+    ##       - size_bytes:
+    ##           usage: "GAUGE"
+    ##           description: "Size of the database in bytes"
+    ##
+    customMetrics: {}
+    ## @param metrics.extraEnvVars Extra environment variables to add to PostgreSQL Prometheus exporter
+    ## see: https://github.com/prometheus-community/postgres_exporter#environment-variables
+    ## For example:
+    ##  extraEnvVars:
+    ##  - name: PG_EXPORTER_DISABLE_DEFAULT_METRICS
+    ##    value: "true"
+    ##
+
+    ## Prometheus Operator ServiceMonitor configuration
+    ##
+    serviceMonitor:
+      enabled: false
+      ## @param metrics.serviceMonitor.namespace Namespace for the ServiceMonitor Resource (defaults to the Release Namespace)
+      ##
+      namespace: ""
+      ## @param metrics.serviceMonitor.interval Interval at which metrics should be scraped.
+      ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
+      ##
+      interval: ""
+      ## @param metrics.serviceMonitor.scrapeTimeout Timeout after which the scrape is ended
+      ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
+      ##
+      scrapeTimeout: ""
