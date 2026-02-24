@@ -3,17 +3,6 @@
 #    - postgres
 #    - questdb
 
-
-#  ports: [OK]
-#    - "8080-8083:8080"
-
-# [OK]
-#  environment:
-#    - "PSYCOPG_QDB_CONN_STR=dbname=qdb user=${QDB_PG_USER} password=${QDB_PG_PASSWORD} host=questdb_alerts port=8812"
-#    - "PSYCOPG_KEY_CONN_STR=dbname=postgres user=postgres password=${POSTGRES_PASSWORD} host=postgres port=5432"
-#    - "ADMIN_TOKEN=${ADMIN_TOKEN}"
-#    - "QDB_CLIENT_CONF=http::addr=questdb_alerts:9000;username=${QDB_PG_USER};password=${QDB_PG_PASSWORD};"
-
 # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
 replicaCount: 1 # 4
 
@@ -36,25 +25,20 @@ entrypoint:
     - 0.0.0.0
     - --port
     - "8080"
-  workingDir: /app/src
 
 env:
-#  "dbname=qdb user=${QDB_PG_USER} password=${QDB_PG_PASSWORD} host=questdb_alerts port=8812"
+  # "dbname=qdb user=${QDB_PG_USER} password=${QDB_PG_PASSWORD} host=questdb_alerts port=8812"
   # service_name.namespace.svc.cluster:service-port
   PSYCOPG_QDB_CONN_STR: "dbname=qdb user=admin password=password host=questdb.questdb.svc.cluster.local port=8812"
-
-#  wget -O- http://questdb.questdb.svc.cluster.local:8812
-
-#  "dbname=postgres user=postgres password=${POSTGRES_PASSWORD} host=postgres port=5432"
+  # "dbname=postgres user=postgres password=${POSTGRES_PASSWORD} host=postgres port=5432"
   PSYCOPG_KEY_CONN_STR: "dbname=postgres user=postgres password=postgres host=postgresql-repository.postgresql-repository.svc.cluster.local port=5432"
-
   ADMIN_TOKEN: "ADMIN_TOKEN"
-
-#  "http::addr=questdb_alerts:9000;username=${QDB_PG_USER};password=${QDB_PG_PASSWORD};"
+  # "http::addr=questdb_alerts:9000;username=${QDB_PG_USER};password=${QDB_PG_PASSWORD};"
   QDB_CLIENT_CONF: "http::addr=questdb.questdb.svc.cluster.local:9000;username=admin;password=password;"
 
 # This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
+
 # This is to override the chart name.
 nameOverride: ""
 fullnameOverride: ""

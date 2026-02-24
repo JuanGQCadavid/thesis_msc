@@ -43,7 +43,6 @@ spec:
             {{- toYaml .args | nindent 12 }}
           command:
             {{- toYaml .command | nindent 12 }}
-{{/*          workingDir: {{ .workingDir }}*/}}
           {{- end}}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
