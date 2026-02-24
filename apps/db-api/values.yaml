@@ -1,17 +1,57 @@
-# Default values for db-api.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+
+#  depends_on:
+#    - postgres
+#    - questdb
+
+
+#  ports: [OK]
+#    - "8080-8083:8080"
+
+# [OK]
+#  environment:
+#    - "PSYCOPG_QDB_CONN_STR=dbname=qdb user=${QDB_PG_USER} password=${QDB_PG_PASSWORD} host=questdb_alerts port=8812"
+#    - "PSYCOPG_KEY_CONN_STR=dbname=postgres user=postgres password=${POSTGRES_PASSWORD} host=postgres port=5432"
+#    - "ADMIN_TOKEN=${ADMIN_TOKEN}"
+#    - "QDB_CLIENT_CONF=http::addr=questdb_alerts:9000;username=${QDB_PG_USER};password=${QDB_PG_PASSWORD};"
 
 # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
-replicaCount: 1
+replicaCount: 1 # 4
 
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
-  repository: nginx
+  repository: juangonzalout/thesis-db-api
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
+
+entrypoint:
+#  command: [ "/bin/bash", "-c", "--" ]
+#  args: [ "while true; do sleep 100000; done;" ]
+  command:
+    - uvicorn
+  args:
+    - api_server.main:app
+    - --host
+    - 0.0.0.0
+    - --port
+    - "8080"
+  workingDir: /app/src
+
+env:
+#  "dbname=qdb user=${QDB_PG_USER} password=${QDB_PG_PASSWORD} host=questdb_alerts port=8812"
+  # service_name.namespace.svc.cluster:service-port
+  PSYCOPG_QDB_CONN_STR: "dbname=qdb user=admin password=password host=questdb.questdb.svc.cluster.local port=8812"
+
+#  wget -O- http://questdb.questdb.svc.cluster.local:8812
+
+#  "dbname=postgres user=postgres password=${POSTGRES_PASSWORD} host=postgres port=5432"
+  PSYCOPG_KEY_CONN_STR: "dbname=postgres user=postgres password=postgres host=postgresql-repository.postgresql-repository.svc.cluster.local port=5432"
+
+  ADMIN_TOKEN: "ADMIN_TOKEN"
+
+#  "http::addr=questdb_alerts:9000;username=${QDB_PG_USER};password=${QDB_PG_PASSWORD};"
+  QDB_CLIENT_CONF: "http::addr=questdb.questdb.svc.cluster.local:9000;username=admin;password=password;"
 
 # This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
@@ -36,18 +76,17 @@ serviceAccount:
 podAnnotations: {}
 # This is for setting Kubernetes Labels to a Pod.
 # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-podLabels: {}
+podLabels:
+  app.kubernetes.io/name: db-api
 
-podSecurityContext: {}
+podSecurityContext:
+  runAsUser: 0
+  allowPrivilegeEscalation: true
   # fsGroup: 2000
 
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+securityContext:
+   runAsUser: 0
+   allowPrivilegeEscalation: true
 
 # This is for setting up a service more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/
 service:
@@ -55,16 +94,15 @@ service:
   type: ClusterIP
   # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
   port: 80
+  containerPort: 8080
 
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
-  enabled: false
-  className: ""
+  enabled: true
+  className: "nginx"
   annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: chart-example.local
+    - host: db-api.172.17.90.93.nip.io
       paths:
         - path: /
           pathType: ImplementationSpecific
@@ -88,11 +126,11 @@ resources: {}
 # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 livenessProbe:
   httpGet:
-    path: /
+    path: /docs
     port: http
 readinessProbe:
   httpGet:
-    path: /
+    path: /docs
     port: http
 
 # This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/

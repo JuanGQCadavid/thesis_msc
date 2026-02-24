@@ -38,11 +38,26 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          {{- with .Values.entrypoint}}
+          args:
+            {{- toYaml .args | nindent 12 }}
+          command:
+            {{- toYaml .command | nindent 12 }}
+{{/*          workingDir: {{ .workingDir }}*/}}
+          {{- end}}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.env}}
+          env:
+            {{- range $indx, $val := .Values.env }}
+            - name: {{ $indx }}
+              value: {{ $val }}
+            {{- end }}
+        {{- end}}
           ports:
             - name: http
-              containerPort: {{ .Values.service.port }}
+              containerPort: {{ .Values.service.containerPort }}
+              hostPort:  {{ .Values.service.port }}
               protocol: TCP
           {{- with .Values.livenessProbe }}
           livenessProbe:
