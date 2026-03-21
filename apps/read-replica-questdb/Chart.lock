@@ -1,0 +1,6 @@
+dependencies:
+- name: questdb
+  repository: https://helm.questdb.io/
+  version: 1.0.20
+digest: sha256:0cbf38b5842b9fc71a33731434c483a2d54bcc1e58c1e4f1ed3dffe695219c41
+generated: "2026-02-14T12:43:24.494427+02:00"
