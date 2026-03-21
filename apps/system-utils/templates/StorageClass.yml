@@ -1,0 +1,13 @@
+{{- range .Values.storageClasses }}
+---
+allowVolumeExpansion: true
+provisioner: driver.longhorn.io
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: {{.name}}
+parameters:
+{{ .parameters | toYaml | indent 2 }}
+{{- end }}

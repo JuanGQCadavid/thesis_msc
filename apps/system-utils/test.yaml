@@ -1,0 +1,17 @@
+---
+# Source: system_utils/templates/StorageClass.yml
+allowVolumeExpansion: true
+provisioner: driver.longhorn.io
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: simple
+parameters:
+  dataEngine: v2
+  dataLocality: best-effort
+  disableRevisionCounter: "true"
+  fsType: ext4
+  numberOfReplicas: "1"
+  staleReplicaTimeout: "30"

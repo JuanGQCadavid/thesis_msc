@@ -1,0 +1,10 @@
+storageClasses:
+  - name: simple
+    parameters:
+      dataEngine: v2
+      dataLocality: best-effort
+      disableRevisionCounter: "true"
+      fsType: ext4
+      numberOfReplicas: "1"
+      staleReplicaTimeout: "30"
+
