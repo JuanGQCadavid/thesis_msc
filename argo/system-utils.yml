@@ -23,7 +23,7 @@ spec:
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: db-api
+    namespace: system-utils
 
   syncPolicy:
     automated:
