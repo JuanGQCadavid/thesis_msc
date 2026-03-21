@@ -8,3 +8,11 @@ storageClasses:
       numberOfReplicas: "1"
       staleReplicaTimeout: "30"
 
+  - name: simplev1
+    parameters:
+      dataEngine: v1
+      dataLocality: best-effort
+      disableRevisionCounter: "true"
+      fsType: ext4
+      numberOfReplicas: "1"
+      staleReplicaTimeout: "30"
