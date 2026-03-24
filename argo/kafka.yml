@@ -3,33 +3,36 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: system-utils
+  name: kafka
   namespace: argocd
   labels:
-    component: core
+    app: tartu-timeseries
 spec:
   project: default
   source:
     repoURL: https://github.com/JuanGQCadavid/thesis_msc.git
     targetRevision: HEAD
-    path: apps/system-utils
+    path: apps/kafka
 
     helm:
-      releaseName: system-utils
+      releaseName: kafka
       valueFiles:
         - values.yaml
+        - base.values.yaml
       ignoreMissingValueFiles: false
-      namespace: default
+      namespace: kafka
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: system-utils
+    namespace: kafka
 
   syncPolicy:
     automated:
       enabled: true
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
 
     retry:
       limit: 5 # number of failed sync attempt retries; unlimited number of attempts if less than 0
@@ -37,4 +40,5 @@ spec:
         duration: 5s # the amount to back off. Default unit is seconds, but could also be a duration (e.g. "2m", "1h")
         factor: 2 # a factor to multiply the base duration after each failed retry
         maxDuration: 3m # the maximum amount of time allowed for the backoff strategy
+
   revisionHistoryLimit: 10
