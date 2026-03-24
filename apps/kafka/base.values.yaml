@@ -1,0 +1,175 @@
+kafka:
+  global:
+    imageRegistry: ""
+    defaultStorageClass: "simplev1"
+  namespaceOverride: ""
+  clusterDomain: cluster.local
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/kafka
+    tag: 4.0.0-debian-12-r10
+
+
+  listeners:
+    client:
+      containerPort: 9092
+      protocol: PLAINTEXT
+      name: CLIENT
+      sslClientAuth: ""
+    ## @param listeners.controller.name Name for the Kafka controller listener
+    ## @param listeners.controller.containerPort Port for the Kafka controller listener
+    ## @param listeners.controller.protocol Security protocol for the Kafka controller listener. Allowed values are 'PLAINTEXT', 'SASL_PLAINTEXT', 'SASL_SSL' and 'SSL'
+    ## @param listeners.controller.sslClientAuth Optional. If SASL_SSL is enabled, configure mTLS TLS authentication type. If SSL protocol is enabled, overrides tls.authType for this listener. Allowed values are 'none', 'requested' and 'required'
+    ## Ref: https://cwiki.apache.org/confluence/display/KAFKA/KIP-684+-+Support+mutual+TLS+authentication+on+SASL_SSL+listeners
+    controller:
+      name: CONTROLLER
+      containerPort: 9093
+      protocol: PLAINTEXT
+      sslClientAuth: ""
+    ## @param listeners.interbroker.name Name for the Kafka inter-broker listener
+    ## @param listeners.interbroker.containerPort Port for the Kafka inter-broker listener
+    ## @param listeners.interbroker.protocol Security protocol for the Kafka inter-broker listener. Allowed values are 'PLAINTEXT', 'SASL_PLAINTEXT', 'SASL_SSL' and 'SSL'
+    ## @param listeners.interbroker.sslClientAuth Optional. If SASL_SSL is enabled, configure mTLS TLS authentication type. If SSL protocol is enabled, overrides tls.authType for this listener. Allowed values are 'none', 'requested' and 'required'
+    interbroker:
+      containerPort: 9094
+      protocol: PLAINTEXT
+      name: INTERNAL
+      sslClientAuth: ""
+    ## @param listeners.external.containerPort Port for the Kafka external listener
+    ## @param listeners.external.protocol Security protocol for the Kafka external listener. . Allowed values are 'PLAINTEXT', 'SASL_PLAINTEXT', 'SASL_SSL' and 'SSL'
+    ## @param listeners.external.name Name for the Kafka external listener
+    ## @param listeners.external.sslClientAuth Optional. If SASL_SSL is enabled, configure mTLS TLS authentication type. If SSL protocol is enabled, overrides tls.sslClientAuth for this listener. Allowed values are 'none', 'requested' and 'required'
+    external:
+      containerPort: 9095
+      protocol: PLAINTEXT
+      name: EXTERNAL
+      sslClientAuth: ""
+    ## @param listeners.extraListeners Array of listener objects to be appended to already existing listeners
+    ## E.g.
+    ## extraListeners:
+    ##  - name: CUSTOM
+    ##    containerPort: 9097
+    ##    protocol: SASL_PLAINTEXT
+    ##    sslClientAuth: ""
+    ##
+    extraListeners: []
+    ## NOTE: If set, below values will override configuration set using the above values (extraListeners.*, controller.*, interbroker.*, client.* and external.*)
+    ## @param listeners.overrideListeners Overrides the Kafka 'listeners' configuration setting.
+    ## @param listeners.advertisedListeners Overrides the Kafka 'advertised.listener' configuration setting.
+    ## @param listeners.securityProtocolMap Overrides the Kafka 'security.protocol.map' configuration setting.
+    overrideListeners: ""
+    advertisedListeners: ""
+    securityProtocolMap: ""
+  ## @section Kafka SASL parameters
+  ## Kafka SASL settings for authentication, required if SASL_PLAINTEXT or SASL_SSL listeners are configured
+  ##
+
+  ## @section Controller-eligible statefulset parameters
+  ##
+  controller:
+    ## @param controller.replicaCount Number of Kafka controller-eligible nodes
+    ##
+    replicaCount: 1
+    ## @param controller.controllerOnly If set to true, controller nodes will be deployed as dedicated controllers, instead of controller+broker processes.
+    ##
+    controllerOnly: false
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: node-role.kubernetes.io/worker
+                  operator: Exists
+    persistence:
+      enabled: true
+      storageClass: "simplev1"
+      size: 8Gi
+  broker:
+    ## @param broker.replicaCount Number of Kafka broker-only nodes
+    ##
+    replicaCount: 0
+    ## @param broker.minId Minimal node.id values for broker-only nodes. Do not change after first initialization.
+    ## Broker-only id increment their ID starting at this minimal value.
+    ## We recommend setting this this value high enough, as IDs under this value will be used by controller-eligible nodes
+    ##
+    ##
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: node-role.kubernetes.io/worker
+                  operator: Exists
+
+    persistence:
+      enabled: true
+      storageClass: "simplev1"
+      size: 8Gi
+
+  ## Service parameters
+  ##
+  service:
+    type: ClusterIP
+    ports:
+      client: 9092
+      controller: 9093
+      interbroker: 9094
+      external: 9095
+
+  networkPolicy:
+    enabled: false
+    ## @param networkPolicy.allowExternal Don't require client label for connections
+    ## When set to false, only pods with the correct client label will have network access to the port Kafka is
+    ## listening on. When true, Kafka accept connections from any source (with the correct destination port).
+    ##
+    allowExternal: true
+    ## @param networkPolicy.allowExternalEgress Allow the pod to access any range of port and all destinations.
+    ##
+    allowExternalEgress: true
+    ## @param networkPolicy.addExternalClientAccess Allow access from pods with client label set to "true". Ignored if `networkPolicy.allowExternal` is true.
+    ##
+    addExternalClientAccess: true
+    ## @param networkPolicy.extraIngress [array] Add extra ingress rules to the NetworkPolicy
+    ## e.g:
+    ## extraIngress:
+    ##   - ports:
+    ##       - port: 1234
+    ##     from:
+    ##       - podSelector:
+    ##           - matchLabels:
+    ##               - role: frontend
+    ##       - podSelector:
+    ##           - matchExpressions:
+    ##               - key: role
+    ##                 operator: In
+    ##                 values:
+    ##                   - frontend
+    extraIngress: []
+    ## @param networkPolicy.extraEgress [array] Add extra ingress rules to the NetworkPolicy
+    ## e.g:
+    ## extraEgress:
+    ##   - ports:
+    ##       - port: 1234
+    ##     to:
+    ##       - podSelector:
+    ##           - matchLabels:
+    ##               - role: frontend
+    ##       - podSelector:
+    ##           - matchExpressions:
+    ##               - key: role
+    ##                 operator: In
+    ##                 values:
+    ##                   - frontend
+    ##
+    extraEgress: []
+    ## @param networkPolicy.ingressPodMatchLabels [object] Labels to match to allow traffic from other pods. Ignored if `networkPolicy.allowExternal` is true.
+    ## e.g:
+    ## ingressPodMatchLabels:
+    ##   my-client: "true"
+    #
+    ingressPodMatchLabels: {}
+    ## @param networkPolicy.ingressNSMatchLabels [object] Labels to match to allow traffic from other namespaces. Ignored if `networkPolicy.allowExternal` is true.
+    ## @param networkPolicy.ingressNSPodMatchLabels [object] Pod labels to match to allow traffic from other namespaces. Ignored if `networkPolicy.allowExternal` is true.
+    ##
+    ingressNSMatchLabels: {}
+    ingressNSPodMatchLabels: {}

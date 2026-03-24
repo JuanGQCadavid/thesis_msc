@@ -8,3 +8,6 @@ upgrade:
 
 template:
 	helm template ${APP} . -f values.yaml -f base.values.yaml -n ${APP} --create-namespace
+
+remove:
+	helm uninstall ${app}
