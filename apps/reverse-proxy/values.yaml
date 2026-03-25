@@ -1,0 +1,58 @@
+config:
+  # Dead letter queue
+  dlq:
+    - type: kafka
+      name: principal
+      topic: "dlq-calls"
+      uri: "kafka-controller-0.kafka-controller-headless.kafka.svc.cluster.local:9092"
+  downstream:
+    principal:
+      origin_server_uri: "questdb.questdb.svc.cluster.local:9000"
+      dlq:
+        enable: true
+        name: principal
+    secondary:
+      - origin_server_uri: "read-replica-questdb.read-replica-questdb.svc.cluster.local:9000" # QuestDB secondary
+  rules: # ORDER MATTERS
+    - regex: "/(write).*"
+      name: "questDB insert"
+      proxy:
+        compress:
+          enable: true
+          method: gzip
+      buffer:
+        enable: true
+        retain: # Both should be specified
+          requests: 5 # number IPL
+          timeout: 1m
+        origin_server_request:
+          http:
+            status_line:
+              http_version: HTTP/1.1
+              resource: /write?precision=n
+              method: POST
+            headers:
+              authorization: Basic YWRtaW46cGFzc3dvcmQ=
+        default_response:
+          http:
+            status_line:
+              http_version: HTTP/1.1
+              status_code: 204 No Content
+            headers:
+              Server: questDB/1.0
+    - regex: "/settings"
+      name: "cache settings"
+      proxy:
+        compress:
+          enable: true
+          method: gzip
+      cache: # Cache only works for GET request
+        enable: true
+        ttl: 1m # Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
+    # TODO: Should I collect metrics for all of this?
+    - regex: "/.*"
+      name: "proxy all"
+      proxy:
+        compress:
+          enable: true
+          method: gzip
