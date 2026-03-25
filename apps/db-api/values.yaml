@@ -31,7 +31,7 @@ env:
   # service_name.namespace.svc.cluster:service-port
   PSYCOPG_QDB_CONN_STR: "dbname=qdb user=admin password=password host=questdb.questdb.svc.cluster.local port=8812"
   # "dbname=postgres user=postgres password=${POSTGRES_PASSWORD} host=postgres port=5432"
-  PSYCOPG_KEY_CONN_STR: "dbname=postgres user=postgres password=postgres host=postgresql-repository.postgresql-repository.svc.cluster.local port=5432"
+  PSYCOPG_KEY_CONN_STR: "dbname=postgres user=postgres password=postgres host=postgresql.postgresql.svc.cluster.local port=5432"
   ADMIN_TOKEN: "ADMIN_TOKEN"
   # "http::addr=questdb_alerts:9000;username=${QDB_PG_USER};password=${QDB_PG_PASSWORD};"
   QDB_CLIENT_CONF: "http::addr=questdb.questdb.svc.cluster.local:9000;username=admin;password=password;"
