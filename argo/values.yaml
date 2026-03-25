@@ -1,0 +1,16 @@
+
+apps:
+  - name: db-api
+    path: apps/db-api
+  - name: monitoring
+    path: apps/monitoring
+  - name: kafka
+    path: apps/kafka
+  - name: system-utils
+    path: apps/system-utils
+  - name: read-replica-questdb
+    path: apps/read-replica-questdb
+  - name: questdb
+    path: apps/questdb-repository
+  - name: postgresql
+    path: apps/postgresql-repository
