@@ -14,3 +14,5 @@ apps:
     path: apps/questdb-repository
   - name: postgresql
     path: apps/postgresql-repository
+  - name: reverse-proxy
+    path: apps/reverse-proxy
