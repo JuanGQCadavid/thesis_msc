@@ -17,5 +17,3 @@ env:
   ADMIN_TOKEN: "ADMIN_TOKEN"
   # "http::addr=questdb_alerts:9000;username=${QDB_PG_USER};password=${QDB_PG_PASSWORD};"
   QDB_CLIENT_CONF: "http::addr=questdb.questdb.svc.cluster.local:9000;username=admin;password=password;"
-
-affinity: {}
