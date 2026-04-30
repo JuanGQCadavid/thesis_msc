@@ -22,10 +22,10 @@ postgresql:
     resources:
      requests:
        cpu: 2
-       memory: 512Mi
+       memory: 256Mi
      limits:
        cpu: 3
-       memory: 1024Mi
+       memory: 512Mi
 
 
     ## Network Policies
