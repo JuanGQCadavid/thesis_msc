@@ -16,10 +16,12 @@ export const options = {
             stages: [
                 // ramp up to average load of 20 virtual users
                 { duration: '10s', target: 20 },
-                { duration: '2m', target: 40 },
-                { duration: '2m', target: 60 },
-                { duration: '2m', target: 80 },
-                { duration: '2m', target: 100 },
+                { duration: '3m', target: 40 },
+                { duration: '3m', target: 80 },
+                { duration: '3m', target: 160 },
+                { duration: '3m', target: 320 },
+                { duration: '3m', target: 640 },
+                { duration: '10m', target: 1000 },
                 // // ramp down to zero
                 { duration: '2m', target: 0 },
             ],
