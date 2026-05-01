@@ -6,6 +6,11 @@ metadata:
   labels:
     app.kubernetes.io/name: {{ .Chart.Name }}
 spec:
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: "50%"
+      maxUnavailable: 0
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ .Chart.Name }}
