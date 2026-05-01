@@ -29,6 +29,19 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /config
+
+          {{- with .Values.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
       priorityClassName: system-node-critical
       terminationGracePeriodSeconds: 30
       volumes:
