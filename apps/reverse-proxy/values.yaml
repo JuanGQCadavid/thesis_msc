@@ -29,7 +29,7 @@ proxy_config:
         buffer:
           enable: true
           retain: # Both should be specified
-            requests: 5 # number IPL
+            requests: 100 # number IPL
             timeout: 1m
           origin_server_request:
             http:
