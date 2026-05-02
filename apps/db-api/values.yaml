@@ -142,22 +142,22 @@ nodeSelector: {}
 
 tolerations: []
 
-affinity:
+affinity: {}
 #  nodeAffinity:
 #    requiredDuringSchedulingIgnoredDuringExecution:
 #      nodeSelectorTerms:
 #        - matchExpressions:
 #          - key: node-role.kubernetes.io/control-plane
 #            operator: DoesNotExist
-  podAntiAffinity:
-    preferredDuringSchedulingIgnoredDuringExecution:
-      - weight: 100
-        podAffinityTerm:
-          labelSelector:
-            matchExpressions:
-              - key: app.kubernetes.io/name
-                operator: In
-                values:
-                  - db-api
-          topologyKey: kubernetes.io/hostname
+#  podAntiAffinity:
+#    preferredDuringSchedulingIgnoredDuringExecution:
+#      - weight: 100
+#        podAffinityTerm:
+#          labelSelector:
+#            matchExpressions:
+#              - key: app.kubernetes.io/name
+#                operator: In
+#                values:
+#                  - db-api
+#          topologyKey: kubernetes.io/hostname
 
