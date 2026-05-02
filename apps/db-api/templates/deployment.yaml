@@ -56,7 +56,6 @@ spec:
           ports:
             - name: http
               containerPort: {{ .Values.service.containerPort }}
-              hostPort:  {{ .Values.service.port }}
               protocol: TCP
           {{- with .Values.livenessProbe }}
           livenessProbe:
