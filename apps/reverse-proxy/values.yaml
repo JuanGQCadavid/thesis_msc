@@ -1,7 +1,7 @@
 image:
   repository: ghcr.io/juangqcadavid/thesis_reverse_proxy
-  #tag: sha-e2a9702
-  tag: sha-b818df3
+#  tag: sha-b818df3
+  tag: sha-230ac9a
 
 proxy_config:
   config:
