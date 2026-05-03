@@ -19,6 +19,13 @@ spec:
       labels:
         app.kubernetes.io/name: {{ .Chart.Name }}
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: DoesNotExist
       containers:
         - name: proxy
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
@@ -34,7 +41,6 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /config
-
           {{- with .Values.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
