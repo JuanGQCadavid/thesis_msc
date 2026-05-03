@@ -29,7 +29,7 @@ proxy_config:
         buffer:
           enable: true
           retain: # Both should be specified
-            requests: 100 # number IPL
+            requests: 300 # number IPL
             timeout: 1m
           origin_server_request:
             http:
@@ -69,12 +69,12 @@ resources:
     memory: 128Mi
 
 # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-livenessProbe:
-  httpGet:
-    path: /ping
-    port: app
-  initialDelaySeconds: 5
-  periodSeconds: 3
+livenessProbe: {}
+#  httpGet:
+#    path: /ping
+#    port: app
+#  initialDelaySeconds: 5
+#  periodSeconds: 3
 
 readinessProbe:
   httpGet:
