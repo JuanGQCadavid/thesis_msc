@@ -23,60 +23,24 @@ export const options = {
 
 export default function () {
     // define URL and payload
-    const url = 'http://db-api.172.17.90.93.nip.io:31694/measurement';
-    const deviceId = "128497"
-    let time = new Date();
-    const payload = JSON.stringify({
-        "measurements": [
-            {
-                "time": time.toISOString(),
-                "device_identity": deviceId,
-                "measurement_type": "pedestrian",
-                "series": [
-                    {
-                        "series_type": "pedestrian-out",
-                        "unit": "count",
-                        "value": 100
-                    },
-                    {
-                        "series_type": "pedestrian-in",
-                        "unit": "count",
-                        "value": 77
-                    }
-                ]
-            },
-            {
-                "time": time.toISOString(),
-                "device_identity": deviceId,
-                "measurement_type": "pedestrian",
-                "series": [
-                    {
-                        "series_type": "pedestrian-out",
-                        "unit": "count",
-                        "value": 55
-                    },
-                    {
-                        "series_type": "pedestrian-in",
-                        "unit": "count",
-                        "value": 44
-                    }
-                ]
-            }
-        ]
-    });
-
+    const url = 'http://reverse-proxy.172.17.90.93.nip.io:31694/write?precision=n';
+    const currentMillis = Date.now();
+    const nanoTimestamp = (BigInt(currentMillis) * 1000000n).toString();
+    let deviceId = crypto.randomUUID()
+    const rawPayload = `
+measurement,measurement_type=pedestrian,series_type=pedestrian-out,device_identity=${deviceId},api_key=admin_key unit="count",value=56i ${nanoTimestamp}
+measurement,measurement_type=pedestrian,series_type=pedestrian-in,device_identity=${deviceId},api_key=admin_key unit="count",value=56i ${nanoTimestamp}`
     const params = {
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Basic YWRtaW5fa2V5OkFETUlOX1RPS0VO',
-            'api_key': 'ADMIN_TOKEN',
+            'Content-Type': 'text/plain',
+            'Authorization': 'Basic YWRtaW46cGFzc3dvcmQ=',
         },
     };
 
     // send a post request and save response as a variable
-    const res = http.post(url, payload, params);
+    const res = http.post(url, rawPayload, params);
 
     check(res, {
-        'response code was 201': (res) => res.status == 201,
+        'response code was 201': (res) => res.status == 204,
     });
 }
