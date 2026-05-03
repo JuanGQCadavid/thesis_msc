@@ -1,6 +1,7 @@
 image:
   repository: ghcr.io/juangqcadavid/thesis_reverse_proxy
   #tag: sha-e2a9702
+  #tag: sha-b818df3
   tag: sha-be15ec0
 
 proxy_config:
@@ -29,7 +30,7 @@ proxy_config:
         buffer:
           enable: true
           retain: # Both should be specified
-            requests: 300 # number IPL
+            requests: 1024 # number IPL
             timeout: 1m
           origin_server_request:
             http:
