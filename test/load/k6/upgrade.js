@@ -1,31 +1,17 @@
-// import necessary module
 import http from 'k6/http';
 import { check } from 'k6';
 
 export const options = {
-    // define thresholds
     thresholds: {
         http_req_failed: [{ threshold: 'rate<0.01', abortOnFail: true }], // http errors should be less than 1%
         http_req_duration: ['p(99)<1000'], // 99% of requests should be below 1s
     },
-    // define scenarios
     scenarios: {
-        // arbitrary name of scenario
         average_load: {
             executor: 'ramping-vus',
             stages: [
-                // ramp up to average load of 20 virtual users
-                { duration: '10s', target: 20 },
-                { duration: '3m', target: 40 },
-                { duration: '2m', target: 60 },
-                { duration: '2m', target: 80 },
-                { duration: '2m', target: 100 },
-                { duration: '2m', target: 120 },
-                { duration: '2m', target: 140 },
-                { duration: '2m', target: 180 },
-                { duration: '2m', target: 200 },
-                { duration: '10m', target: 300 },
-                // // ramp down to zero
+                { duration: '2m', target: 20 },
+                { duration: '10m', target: 20 },
                 { duration: '2m', target: 0 },
             ],
         },
@@ -33,7 +19,6 @@ export const options = {
 };
 
 export default function () {
-    // define URL and payload
     const url = 'http://db-api.172.17.90.93.nip.io:31694/measurement';
     const deviceId = "128497"
     let time = new Date();
@@ -84,9 +69,7 @@ export default function () {
         },
     };
 
-    // send a post request and save response as a variable
     const res = http.post(url, payload, params);
-
     check(res, {
         'response code was 201': (res) => res.status == 201,
     });

@@ -22,7 +22,6 @@ export const options = {
 };
 
 export default function () {
-    // define URL and payload
     const url = 'http://reverse-proxy.172.17.90.93.nip.io:31694/write?precision=n';
     const currentMillis = Date.now();
     const nanoTimestamp = (BigInt(currentMillis) * 1000000n).toString();
@@ -37,9 +36,7 @@ measurement,measurement_type=pedestrian,series_type=pedestrian-in,device_identit
         },
     };
 
-    // send a post request and save response as a variable
     const res = http.post(url, rawPayload, params);
-
     check(res, {
         'response code was 201': (res) => res.status == 204,
     });
