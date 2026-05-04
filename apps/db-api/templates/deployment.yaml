@@ -8,11 +8,12 @@ spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
-  strategy:
+  strategy: # TODO: ROLLOUT test
     type: RollingUpdate
     rollingUpdate:
       maxSurge: "100%"
       maxUnavailable: 0
+
   selector:
     matchLabels:
       {{- include "db-api.selectorLabels" . | nindent 6 }}
@@ -28,6 +29,7 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
+      terminationGracePeriodSeconds: 60 # TODO: ROLLOUT test
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -58,6 +60,10 @@ spec:
               value: {{ $val }}
             {{- end }}
         {{- end}}
+          lifecycle: # TODO: ROLLOUT test
+            preStop:
+              exec:
+                command: [ "/bin/sh", "-c", "sleep 30" ]
           ports:
             - name: http
               containerPort: {{ .Values.service.containerPort }}
