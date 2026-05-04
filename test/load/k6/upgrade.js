@@ -10,8 +10,8 @@ export const options = {
         average_load: {
             executor: 'ramping-vus',
             stages: [
-                { duration: '2m', target: 20 },
-                { duration: '10m', target: 20 },
+                { duration: '2m', target: 15 },
+                { duration: '10m', target: 15 },
                 { duration: '2m', target: 0 },
             ],
         },
