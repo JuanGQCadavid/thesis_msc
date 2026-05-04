@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: rollout-restarter
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: rollout-restarter
+  namespace: rollout-restarter
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: rollout-restarter-role
+rules:
+  - apiGroups: ["apps", "extensions"]
+    resources: ["deployments"]
+    verbs: ["get", "patch", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+# This cluster role binding allows anyone in the "manager" group to read secrets in any namespace.
+kind: ClusterRoleBinding
+metadata:
+  name: rollout-restarter-global
+subjects:
+  - kind: ServiceAccount
+    name: rollout-restarter
+    namespace: rollout-restarter
+roleRef:
+  kind: ClusterRole
+  name: rollout-restarter-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: reset-db-api
+  namespace: rollout-restarter
+spec:
+  schedule: "*/1 * * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: rollout-restarter
+          containers:
+            - name: kubectl
+              image: bitnami/kubectl:latest
+              imagePullPolicy: IfNotPresent
+              command:
+                - /bin/sh
+                - -c
+                - "kubectl rollout restart deployment db-api -n db-api"
+          restartPolicy: OnFailure
+
