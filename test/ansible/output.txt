@@ -1,0 +1,117 @@
+
+# Commands
+cd node-provisioning
+ansible-playbook set-up-worker.yml \
+    -e "ansible_python_interpreter=/usr/bin/python3"
+
+# OUTPUT 
+
+PLAY [worker] *********************************
+
+TASK [Gathering Facts] ************************
+ok: [172.17.90.57]
+
+TASK [Add docker repo] ************************
+changed: [172.17.90.57]
+
+TASK [Install ContainerD and RunC] ************
+changed: [172.17.90.57]
+
+TASK [Configuring net ip forward] *************
+changed: [172.17.90.57]
+
+TASK [Copy containerd config] *****************
+changed: [172.17.90.57]
+
+TASK [Restarting ContainerD] ******************
+changed: [172.17.90.57]
+
+TASK [enabling ContainerD] ********************
+changed: [172.17.90.57]
+
+PLAY [worker] *********************************
+
+TASK [Gathering Facts] ************************
+ok: [172.17.90.57]
+
+TASK [Install dependencies] *******************
+changed: [172.17.90.57]
+
+TASK [Install iptables] ***********************
+changed: [172.17.90.57]
+
+TASK [CNI Plugins] ****************************
+changed: [172.17.90.57]
+
+TASK [Set SELinux in permissive mode (effectively disabling it)]
+changed: [172.17.90.57]
+
+PLAY [worker] *********************************
+
+TASK [Gathering Facts] ************************
+ok: [172.17.90.57]
+
+TASK [Adding yum repository for K8s] **********
+changed: [172.17.90.57]
+
+TASK [Install kubelet kubeadm kubectl] ********
+changed: [172.17.90.57]
+
+TASK [Enabling kubelet] ***********************
+changed: [172.17.90.57]
+
+TASK [Getting Hostname] ***********************
+changed: [172.17.90.57]
+
+TASK [Create working dir] *********************
+changed: [172.17.90.57]
+
+TASK [Configuring join template] **************
+changed: [172.17.90.57]
+
+TASK [Joining cluster] ************************
+changed: [172.17.90.57]
+
+TASK [Configuring create template] ************
+skipping: [172.17.90.57]
+
+TASK [Create cluster] *************************
+skipping: [172.17.90.57]
+
+TASK [copying certs] **************************
+skipping: [172.17.90.57]
+
+TASK [Untainted the CP] ***********************
+skipping: [172.17.90.57]
+
+TASK [Downloading cilium] *********************
+skipping: [172.17.90.57]
+
+TASK [Installing cilium] **********************
+skipping: [172.17.90.57]
+
+PLAY [cp] *************************************
+
+TASK [Gathering Facts] ************************
+ok: [172.17.90.93]
+
+TASK [creating working folder] ****************
+changed: [172.17.90.93]
+
+TASK [Install basics] *************************
+changed: [172.17.90.93]
+
+TASK [Cleaning working dir] *******************
+changed: [172.17.90.93]
+
+PLAY RECAP ************************************
+172.17.90.57  : ok=20 changed=17 unreachable=0  failed=0 [...]
+172.17.90.93  : ok=4  changed=3  unreachable=0  failed=0 [...]  
+
+➜  node-provisioning git:(main) ✗ k get nodes
+NAME                              STATUS   ROLES           AGE     
+control-plane.openstacklocal      Ready    control-plane   75d     
+performance-test.openstacklocal   Ready    <none>          4m41s   
+worker-1.openstacklocal           Ready    worker          75d    
+worker-2.openstacklocal           Ready    worker          75d     
+worker-3.openstacklocal           Ready    worker          75d    
