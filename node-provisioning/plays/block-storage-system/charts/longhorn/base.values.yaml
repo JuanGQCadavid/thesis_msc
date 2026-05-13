@@ -7,5 +7,7 @@ longhorn:
     secureBackends: false
   defaultSettings:
     defaultReplicaCount: 2
+    #https://longhorn.github.io/longhorn-tests/manual/pre-release/node/improve-node-failure-handling/
+    nodeDownPodDeletionPolicy: "delete-statefulset-pod" # This helps on sts to recover faster when node is down.
   longhornUI:
     replicas: 1
